@@ -1,48 +1,59 @@
 public class Solution {
-
-    
     public boolean isInterleave(String s1, String s2, String s3) {
         // Start typing your Java solution below
         // DO NOT write main() function
-        if(s3.length() != s1.length() + s2.length()) return false;
+        if(s1.length() + s2.length() != s3.length()) return false;
+        int m = s1.length();
+        int n = s2.length();
+        
+        boolean[][] dp = new boolean[m+1][n+1];
+        dp[0][0] = true;
+        
+        
+        for(int i = 1; i <= m; ++i) {
+            
+            if(s1.charAt(i-1) == s3.charAt(i-1))
+                dp[i][0] = true;
+            else break;
+        }
+        
+        for(int j = 1; j <= n; ++j) {
+            
+            if(s2.charAt(j-1) == s3.charAt(j-1))
+                dp[0][j] = true;
+            else break;
+        }
+        
+        for(int i = 1; i <= m; ++i) {
+            for(int j = 1; j <= n; ++j) {
+                if(s1.charAt(i-1) == s3.charAt(i+j-1) && dp[i-1][j] || s2.charAt(j-1) == s3.charAt(i+j-1) && dp[i][j-1]) {
+                    dp[i][j] = true;
+                }
+            }
+        }
+        
+        return dp[m][n];
+    }
+
+}
+
+public class Solution {
+    public boolean isInterleave(String s1, String s2, String s3) {
+        // Start typing your Java solution below
+        // DO NOT write main() function
+        if(s1.length() + s2.length() != s3.length()) return false;
         
         return isInterleave(s1, 0, s2, 0, s3, 0);
     }
     
-    public boolean isInterleave(String s1, int i1, String s2, int i2, String s3, int i3) {
-
-        int i = i1;
-        int j = i2;
-        int k = i3;
+    private boolean isInterleave(String s1, int i1, String s2, int i2, String s3, int i3) {
         
-        while(i < s1.length() || j < s2.length()) {
-            
-            if(i < s1.length() && j < s2.length()) {
-            
-                if(s1.charAt(i) != s2.charAt(j)) {
-                    if(s1.charAt(i) == s3.charAt(k)) {
-                        ++i;
-                        ++k;
-                    } else if(s2.charAt(j) == s3.charAt(k)) {
-                        ++j;
-                        ++k;
-                    } else {
-                        return false;
-                    }
-                } else {
-                    if(s1.charAt(i) != s3.charAt(k)) {
-                        return false;
-                    } else {
-                        return isInterleave(s1, i + 1, s2, j, s3, k +1 ) || isInterleave(s1, i, s2, j + 1, s3, k +1 );
-                    }
-                }
-            } else if(i < s1.length()){
-                return s1.substring(i).equals(s3.substring(k));
-            } else {
-                return s2.substring(j).equals(s3.substring(k));
-            }
-        }
-        return true;
+        if(i1 >= s1.length()) return s2.substring(i2).equals(s3.substring(i3));
+        
+        if(i2 >= s2.length()) return s1.substring(i1).equals(s3.substring(i3));
+        
+        return ( s1.charAt(i1) == s3.charAt(i3) && isInterleave(s1, i1 + 1, s2, i2, s3, i3 + 1))
+         || (s2.charAt(i2) == s3.charAt(i3) && isInterleave(s1, i1, s2, i2 + 1, s3, i3 + 1));
     }
 }
 
