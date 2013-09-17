@@ -29,3 +29,31 @@ public class Solution {
         return result;
     }
 }
+
+public class Solution {
+    public int divide(int dividend, int divisor) {
+        // Start typing your Java solution below
+        // DO NOT write main() function
+        if(divisor == 0 || dividend == 0) return 0;
+        
+        long a = Math.abs((long)dividend);
+        long b = Math.abs((long)divisor);
+        
+        long result = 0;
+        
+        while(a >= b) {
+            long c = b;
+            for(int i = 0; a >= c; ++i) {
+                a -= c;
+                c <<= 1;
+                result += (1 << i);
+            }
+        }
+        
+        if(((dividend ^ divisor) >> 31) != 0) {
+            result = -result;
+        }
+        
+        return (int)result;
+    }
+}
