@@ -74,3 +74,83 @@ public class Solution {
         return found;
     }
 }
+
+
+
+public class Solution {
+    private HashSet<String> dict;
+    private HashMap<String, ArrayList<String>> map;
+    
+    public ArrayList<ArrayList<String>> findLadders(String start, String end, HashSet<String> dict) {
+        // Start typing your Java solution below
+        // DO NOT write main() function
+        ArrayList<ArrayList<String>> result = new ArrayList<ArrayList<String>>();
+        map = new HashMap<String, ArrayList<String>>();
+        this.dict = dict;
+        buildMap(start.length());
+        
+        ArrayList<String> q = new ArrayList<String>();
+        q.add(start);
+                
+        ArrayList<ArrayList<String>> currArrs = new ArrayList<ArrayList<String>>();
+        currArrs.add(q);
+        
+        HashSet<String> remains = new HashSet<String>(dict);
+        remains.remove(start);
+        boolean done = false;
+        
+        while(!done) {
+            ArrayList<ArrayList<String>>  newArrs = new ArrayList<ArrayList<String>>();
+            HashSet<String> nextWords = new HashSet<String>();
+            
+            for(ArrayList<String> curr : currArrs)  {
+                String last = curr.get(curr.size() - 1);
+                ArrayList<String> list = map.get(last);
+                
+                for(String next: list) {
+                    
+                    if(next.equals(end) || remains.contains(next)) {
+                        if(next.equals(end)) {
+                            done = true;
+                        }
+                        
+                        nextWords.add(next);
+                        ArrayList<String> newList = new ArrayList<String>(curr);
+                        newList.add(next);
+                        newArrs.add(newList);
+                    }
+                }
+            }
+            
+            if(nextWords.size() == 0) done = true;
+            remains.removeAll(nextWords);
+            currArrs = newArrs;
+        }
+        
+        for(ArrayList<String> list : currArrs) {
+            String last = list.get(list.size() - 1);
+            if(last.equals(end)) {
+                result.add(list);
+            }
+        }
+        return result;
+    }
+    
+    private void buildMap(int len) {
+        HashSet<String> used = new HashSet<String>(dict);
+        for(String curr : dict) {
+            ArrayList<String> list = new ArrayList<String>();
+            for(int i = 0; i < len; ++i) {
+                StringBuilder sb = new StringBuilder(curr);
+                for(char c = 'a'; c <= 'z'; ++c) {
+                    sb.setCharAt(i, c);
+                    String str = sb.toString().intern();
+                    if(str.intern() != curr.intern() && dict.contains(str)) {
+                        list.add(str);
+                    }
+                }
+            }
+            map.put(curr, list);
+        }
+    }
+}
