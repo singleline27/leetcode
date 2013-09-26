@@ -8,66 +8,31 @@
  * }
  */
 public class Solution {
-
-    final private class Pair {
-        public TreeNode node;
-        public int level;
-        
-        public Pair(TreeNode node, int level) {
-            this.node = node;
-            this.level = level;
-        }
-    };
-    
     public ArrayList<ArrayList<Integer>> levelOrder(TreeNode root) {
         // Start typing your Java solution below
         // DO NOT write main() function
-        ArrayList<ArrayList<Integer>> result = new ArrayList<ArrayList<Integer>>();
+        ArrayList<ArrayList<Integer>> res = new ArrayList<ArrayList<Integer>>();
+        if(root == null) return res;
         
-        if(root == null) {
-            return result; 
-        }    
+        Queue<TreeNode> currLevel = new LinkedList<TreeNode>();
+        Queue<TreeNode> nextLevel = new LinkedList<TreeNode>();
         
-        Queue<Pair> q = new LinkedList<Pair>();
-        HashMap<Integer, ArrayList<Integer>> map = new HashMap<Integer, ArrayList<Integer>>();
-        q.add(new Pair(root, 0));
+        currLevel.add(root);
         
-        while(q.size() > 0) {
-            Pair p = q.poll();
-            TreeNode curr = p.node;
-            int level = p.level;
-            
-            ArrayList<Integer> list;
-            if(map.containsKey(level)) {
-                list = map.get(level);
-            } else {
-                list = new ArrayList<Integer>();    
-                map.put(level, list);
+        while(currLevel.size() > 0) {
+            ArrayList<Integer> thisLevel = new ArrayList<Integer>();
+            while(currLevel.size() > 0) {
+                TreeNode curr = currLevel.poll();
+                thisLevel.add(curr.val);
+                
+                if(curr.left != null) nextLevel.add(curr.left);
+                if(curr.right != null) nextLevel.add(curr.right);
             }
-            list.add(curr.val);
-            
-            if(curr.left != null) {
-                q.add(new Pair(curr.left, level + 1));
-            }
-            
-            if(curr.right != null) {
-                q.add(new Pair(curr.right, level + 1));
-            }
+            res.add(thisLevel);
+            currLevel = nextLevel;
+            nextLevel = new LinkedList<TreeNode>();
             
         }
-        
-        //for(ArrayList<Integer> list : map.values()) {
-        //    result.add(list);
-        //}
-        
-        for(int i = 0; ; ++i) {
-            if(map.containsKey(i)) {
-                result.add(map.get(i));
-            } else {
-                break;
-            }
-        }
-        
-        return result;
+        return res;
     }
 }
